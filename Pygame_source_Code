@@ -1,0 +1,37 @@
+import pygame, sys
+from pygame import *
+from pygame.locals import *
+#Colors
+RED =   (255,   0,   0)
+BLACK = (0, 0, 0)
+#Initial Constants
+SCREEN_WIDTH = 1300
+SCREEN_HEIGHT = 700
+pygame.init() #Setting up Pygame
+def main():
+    game_setup()
+    game_Loop()
+def game_setup():
+    background()
+    snake_body()
+#Creating the game window
+#Setting the background colour to Red ##RBG##
+display.set_caption("Hello World!")
+def background():
+    global DISPLAYSURF
+    DISPLAYSURF = display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
+    DISPLAYSURF.fill(RED)
+def snake_body():
+    X = SCREEN_WIDTH / 2
+    Y = SCREEN_HEIGHT / 2
+    pygame.draw.rect(DISPLAYSURF, BLACK, [X, Y, 20, 25])
+def game_Loop():
+    while True:
+        for event in pygame.event.get():
+            if event.type == QUIT:
+                pygame.quit()
+                sys.exit()
+            display.update()
+
+#Executing Program
+main()
