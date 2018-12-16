@@ -5,6 +5,7 @@ from pygame.locals import *
 RED =   (255,   0,   0)
 BLACK = (0, 0, 0)
 #Initial Constants
+body_size = 15
 SCREEN_WIDTH = 1300
 SCREEN_HEIGHT = 700
 pygame.init() #Setting up Pygame
@@ -13,34 +14,56 @@ def main():
     game_Loop()
 def game_setup():
     background()
-    snake_body()
+    snake_body(body_size)
 #Creating the game window
 #Setting the background colour to Red ##RBG##
-display.set_caption("Hello World!")
+display.set_caption("snEECS!")
 def background():
     global DISPLAYSURF
     DISPLAYSURF = display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     DISPLAYSURF.fill(RED)
-def snake_body():
+def snake_body(body_size):
     global X, Y
     X = SCREEN_WIDTH // 2
     Y = SCREEN_HEIGHT // 2
+    body_size = 15
     global body
-    body = pygame.draw.rect(DISPLAYSURF, BLACK, [X, Y, 20, 25], 0)
+    body = pygame.draw.rect(DISPLAYSURF, BLACK, [X, Y, body_size, body_size], 0)
 def game_Loop():
     i=10
     #body=pygame.draw.rect(DISPLAYSURF, BLACK, [X, Y, 20, 25])
+    move = [X, Y, body_size, body_size]
     while True:
         for event in pygame.event.get():
             if event.type == QUIT:
                 pygame.quit()
                 sys.exit()
-            display.update()
-            i+=30
-            global body
-            move = body.move(i, i)
-            body=pygame.draw.rect(DISPLAYSURF, BLACK, move, 0)
-            #body.fill(BLACK)
+
+            if event.type == pygame.KEYDOWN:
+                move_Left = event.key == pygame.K_LEFT
+                move_Right = event.key == pygame.K_RIGHT
+                move_Up = event.key == pygame.K_UP
+                move_Down = event.key == pygame.K_DOWN
+
+                ##Changing snake coordinates on key presses
+                global body
+                if move_Left:
+                    move = body.move(-body_size, 0)
+                if move_Right:
+                    move = body.move(body_size, 0)
+                if move_Up:
+                    move = body.move(0, -body_size)
+                if move_Down:
+                    move = body.move(0, body_size)
+                DISPLAYSURF.fill(RED)
+
+                body=pygame.draw.rect(DISPLAYSURF, BLACK, move, 0)
+                display.update()
+
+            #global body
+            #move = body.move(i, i)
+            #body=pygame.draw.rect(DISPLAYSURF, BLACK, move, 0)
+
 
 #Executing Program
 main()
