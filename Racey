@@ -1,12 +1,15 @@
 import pygame
+from pygame.locals import *
 import time
 import random
 pygame.init()
+Info = pygame.display.Info()
 # All variables
-screen_width = 800
-screen_hieght = 600
+screen_width = Info.current_w
+screen_height = Info.current_h
 car_width = 50
-car_hieght = 80
+car_height = 80
+#pause = False
 # All required colors
 white = (255, 255, 255)
 black = (0, 0, 0)
@@ -17,14 +20,19 @@ green = (0, 255, 0)
 hot_green = (0, 200, 0)
 light_green = (96, 255, 96)
 blue = (0, 0, 255)
+snakePass = pygame.image.load('logo.jpg')
+snakePass = pygame.transform.scale(snakePass, (screen_width, screen_height))
 # Window 
-window = pygame.display.set_mode((screen_width, screen_hieght))
+window = pygame.display.set_mode((screen_width, screen_height),pygame.FULLSCREEN, RESIZABLE)
 pygame.display.set_caption('Game')
 # Our game clock
 clock = pygame.time.Clock()
 # Car image 
 carImg = pygame.image.load('car.png')
-carImg = pygame.transform.scale(carImg, (car_width, car_hieght))
+carImg = pygame.transform.scale(carImg, (car_width, car_height))
+def exit():
+    pygame.quit()
+    quit()
 def dodge(dodge):
     font = pygame.font.Font('freesansbold.ttf',12)
     text = font.render('Dodged: '+str(dodge), True, black)
@@ -33,38 +41,70 @@ def dodge(dodge):
 # To blit car on the window
 def car(x, y):
     window.blit(carImg,(x, y))
+    
 # To display the message when car crashed
+def text_object(text, font):
+    textSurface = font.render(text, True, black)
+    return textSurface, textSurface.get_rect()
 def message_display(text):
-    font = pygame.font.Font('freesansbold.ttf', 70)
-    msg = font.render(text, True, black)
-    window.blit(msg,((screen_width/2)-len(text)*22,50))
+    largeText = pygame.font.Font('freesansbold.ttf', 115)
+    TextSurf, TextRect = text_object(text, largeText)
+    TextRect.center = ((screen_width/2, screen_height/2))
+    window.blit(TextSurf, TextRect)
     pygame.display.update()
     time.sleep(2)
     gameLoop()
-    
 def crash():
-    message_display('GAME OVER')
+    #window.fill(white)
+    #message_display('GAME OVER')
+    over = True
+    while over:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+            window.fill(white)
+            smallText = pygame.font.Font('freesansbold.ttf', 115)
+            TextSurf, TextRect = text_object('GAME OVER', smallText)
+            TextRect.center = ((screen_width/2, screen_height/2))
+            window.blit(TextSurf, TextRect)
+            button('Play Again',(3*screen_width)/20,screen_height/1.2,150,50,green,hot_green,gameLoop)
+            button('Quit!',(3*screen_width)/4,screen_height/1.2,100,50,red,hot_red,exit)
+            pygame.display.update()
+    
 # enemy block
 def enemy(thingX,thingY,thingW,thingH,color):
     pygame.draw.rect(window, black, (thingX,thingY,thingW,thingH))
-def button(msg,x,y,w,h,ac,ic, action):
+def button(msg,x,y,w,h,ac,ic,action=None):
             mouse = pygame.mouse.get_pos()
             click = pygame.mouse.get_pressed()
             if x+w > mouse[0] > x and y+h > mouse[1] > y:
                 pygame.draw.rect(window, ac, (x, y, w, h))
-                if click[0] == 1:
-                    if action == 'play':
-                        gameLoop()
-                    elif action == 'quit':
-                        pygame.quit()
-                        quit()
+                if click[0] == 1 and action != None:
+                    action()
             else:
                 pygame.draw.rect(window, ic, (x, y, w, h))
-            font = pygame.font.Font('freesansbold.ttf', 20)
-            msg = font.render(msg, True, black)
-            window.blit(msg,((x-20)+(w/2),(y-10)+(h/2)))
-            
-
+            smallText = pygame.font.Font('freesansbold.ttf', 20)
+            TextSurf, TextRect = text_object(msg, smallText)
+            TextRect.center = (x+(w/2),y+(h/2))
+            window.blit(TextSurf, TextRect)
+def unpause():
+        global pause
+        pause = False
+def paused():
+        while pause:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    quit()
+            window.fill(white)
+            smallText = pygame.font.Font('freesansbold.ttf', 70)
+            TextSurf, TextRect = text_object('Paused', smallText)
+            TextRect.center = (((screen_width/2, screen_height/2)))
+            window.blit(TextSurf, TextRect)
+            button('Continue',(3*screen_width)/20,screen_height/1.2,100,50,green,hot_green,unpause)
+            button('Quit!',(3*screen_width)/4,screen_height/1.2,100,50,red,hot_red,exit)
+            pygame.display.update()
 def menu():
         intro = True
         while intro:
@@ -72,25 +112,33 @@ def menu():
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     quit()
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_ESCAPE:
+                        pygame.quit()
+                        quit()
+                
             window.fill(white)
-            font = pygame.font.Font('freesansbold.ttf', 70)
-            msg = font.render('Snake Game', True, black)
-            window.blit(msg,((screen_width/2)-len('Snake Game')*22,50))
-            button('GO !',150,450,100,50,green,hot_green,'play')
-            button('Quit!',550,450,100,50,red,hot_red,'quit')
+            window.blit(snakePass, (0,0))
+            #smallText = pygame.font.Font('freesansbold.ttf', 70)
+            #TextSurf, TextRect = text_object('Snake Game', smallText)
+            #TextRect.center = (((screen_width/2, screen_height/4)))
+            #window.blit(TextSurf, TextRect)
+            button('GO!',(3*screen_width)/20,screen_height/1.2,100,50,green,hot_green,gameLoop)
+            button('Quit!',(3*screen_width)/4,screen_height/1.2,100,50,red,hot_red,exit)
             pygame.display.update()
 # Game main loop
 def gameLoop():
+    global pause
     dodged = 0
     x = screen_width*0.45
-    y = screen_hieght*0.8
+    y = screen_height*0.8
     x_change = 0
     y_change = 0
     start_thingX = random.randrange(0,screen_width)
     start_thingY = -300
     thing_speed = 7
     thing_width = 50
-    thing_hieght = 50
+    thing_height = 50
     run = True
     while run:
         # To quit the window when cross button pressed
@@ -108,6 +156,13 @@ def gameLoop():
                     y_change = -5
                 if event.key == pygame.K_DOWN:
                     y_change = 5
+                if event.key == pygame.K_ESCAPE:
+                    pygame.quit()
+                    quit()
+                # To pause the game
+                if event.key == pygame.K_p:
+                    pause = True
+                    paused()
             if event.type == pygame.KEYUP:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_RIGHT or event.key == pygame.K_UP or event.key == pygame.K_DOWN:
                     x_change,y_change = 0,0
@@ -116,24 +171,26 @@ def gameLoop():
                     
         window.fill(white)
         # Functions to call
-        enemy(start_thingX, start_thingY, thing_width, thing_hieght, black)
+        enemy(start_thingX, start_thingY, thing_width, thing_height, black)
         car(x, y)
         dodge(dodged)
         # To move the enemy block on the screen
         start_thingY += thing_speed
         # To regenrate the block randomly after colliding wall 
-        if start_thingY > screen_hieght:
-            start_thingY = 0-thing_hieght
+        if start_thingY > screen_height:
+            start_thingY = 0-thing_height
             start_thingX = random.randrange(0, screen_width)
             dodged+=1
             thing_width+=1
         # For collision of block with car    
-            
-        if y < start_thingY + (thing_hieght-5):
-            if x > start_thingX and x < start_thingX + thing_width or x + (car_width-5) > start_thingX and x + (car_width-5) < start_thingX + thing_width:                
+        if y < start_thingY + (thing_height-5):
+            if (x > start_thingX and x < (start_thingX + thing_width)) or (x + (car_width-5) > start_thingX and x + (car_width-5) < (start_thingX + thing_width)):                
+                time.sleep(1)
                 crash()
+                
         # FOr collision of car with wall
-        if x > screen_width-50 or x < 0 or y > screen_hieght-80 or y < 0:
+        if x > screen_width-50 or x < 0 or y > screen_height-80 or y < 0:
+            time.sleep(1)
             crash()
         pygame.display.update()
         clock.tick(60)
