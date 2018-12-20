@@ -1,12 +1,16 @@
+
 import pygame, sys
 from pygame import *
 from pygame.locals import *
 import time
 import random ##For creating apples randomly
 pygame.init()
+body_size = 20
 Info = pygame.display.Info()
-SCREEN_WIDTH = Info.current_w
-SCREEN_HEIGHT = Info.current_h
+SCREEN_WIDTH = Info.current_w - body_size
+SCREEN_HEIGHT = Info.current_h - body_size
+#SCREEN_WIDTH  =  900
+#SCREEN_HEIGHT  = 600
 #Colors]
 hot_red = (180, 0, 0)
 light_red = (255, 96, 96)
@@ -18,7 +22,7 @@ BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 Food_colour = (150, 100, 25)
 clock = pygame.time.Clock()
-FPS = 15
+FPS= 40
 snakePass = pygame.image.load('logo.jpg')
 snakePass = pygame.transform.scale(snakePass, (SCREEN_WIDTH, SCREEN_HEIGHT))
 ######MUSIC#######
@@ -26,8 +30,8 @@ snakePass = pygame.transform.scale(snakePass, (SCREEN_WIDTH, SCREEN_HEIGHT))
 #pygame.mixer.music.play(-1,0.0)
 ##################
 #Initial Constants
-body_size = 20
-vel = 5
+
+vel = 1
 Xvel = 0
 Yvel = 0
 #background_image = pygame.image.load("SEECS.jpg")
@@ -85,8 +89,8 @@ def snake(snake_body, body_size):
 def game_Loop():
     snake_body = []
     snake_length = 3
-    foodX = round(random.randrange(0, SCREEN_WIDTH - body_size)) / body_size * body_size
-    foodY = round(random.randrange(0, SCREEN_HEIGHT - body_size)) / body_size * body_size
+    foodX = round(random.randrange(0, SCREEN_WIDTH - body_size) / body_size) * body_size
+    foodY = round(random.randrange(0, SCREEN_HEIGHT - body_size) / body_size) * body_size
     ##Round function is used on above variables so that
     ##the food appears in the same line of action S the snake
     while True:
@@ -95,26 +99,26 @@ def game_Loop():
                 pygame.quit()
                 sys.exit()
 
-        if event.type == pygame.KEYDOWN:
-            move_Left = event.key == pygame.K_LEFT
-            move_Right = event.key == pygame.K_RIGHT
-            move_Up = event.key == pygame.K_UP
-            move_Down = event.key == pygame.K_DOWN
+            if event.type == pygame.KEYDOWN:
+                move_Left = event.key == pygame.K_LEFT
+                move_Right = event.key == pygame.K_RIGHT
+                move_Up = event.key == pygame.K_UP
+                move_Down = event.key == pygame.K_DOWN
 
                 ##Changing snake coordinates on key presses
-            global X, Y, Xvel, Yvel
-            if move_Left:
-                Xvel = -10
-                Yvel = 0
-            if move_Right:
-                Xvel = 10
-                Yvel = 0
-            if move_Up:
-                Yvel = -10
-                Xvel = 0
-            if move_Down:
-                Yvel = 10
-                Xvel = 0
+                global X, Y, Xvel, Yvel
+                if move_Left:
+                    Xvel = -1
+                    Yvel = 0
+                if move_Right:
+                    Xvel = 1
+                    Yvel = 0
+                if move_Up:
+                    Yvel = -1
+                    Xvel = 0
+                if move_Down:
+                    Yvel = 1
+                    Xvel = 0
         #window.fill(RED)
         X += Xvel
         Y += Yvel
@@ -127,15 +131,17 @@ def game_Loop():
         snake_body.append(snake_head)
         #Eating the apple
         if (abs(X - foodX) < body_size) and (abs(Y - foodY) < body_size):
-            foodX = round(random.randrange(0, SCREEN_WIDTH - body_size)) / body_size * body_size
-            foodY = round(random.randrange(0, SCREEN_HEIGHT - body_size)) / body_size * body_size
+            foodX = round(random.randrange(0, SCREEN_WIDTH - body_size) / body_size) * body_size
+            foodY = round(random.randrange(0, SCREEN_HEIGHT - body_size) / body_size) * body_size
             snake_length += 5
+            print('om nom nom')
         if len(snake_body) > snake_length:
             del snake_body[0]
         snake(snake_body, body_size)
         display.update()
-        clock.tick(FPS)
-        window.fill(BLACK)
+        
+        clock.tick()
+        window.fill(RED)
 menu()
 #Executing Program
 game_Loop()
