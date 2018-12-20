@@ -1,4 +1,3 @@
-
 import pygame, sys
 from pygame import *
 from pygame.locals import *
@@ -7,10 +6,10 @@ import random ##For creating apples randomly
 pygame.init()
 body_size = 20
 Info = pygame.display.Info()
-SCREEN_WIDTH = Info.current_w - body_size
-SCREEN_HEIGHT = Info.current_h - body_size
-#SCREEN_WIDTH  =  900
-#SCREEN_HEIGHT  = 600
+#SCREEN_WIDTH = Info.current_w - body_size
+#SCREEN_HEIGHT = Info.current_h - body_size
+SCREEN_WIDTH  =  900
+SCREEN_HEIGHT  = 600
 #Colors]
 hot_red = (180, 0, 0)
 light_red = (255, 96, 96)
@@ -22,9 +21,9 @@ BLACK = (0, 0, 0)
 GREEN = (0, 255, 0)
 Food_colour = (150, 100, 25)
 clock = pygame.time.Clock()
-FPS= 40
-snakePass = pygame.image.load('logo.jpg')
-snakePass = pygame.transform.scale(snakePass, (SCREEN_WIDTH, SCREEN_HEIGHT))
+FPS= 1
+#snakePass = pygame.image.load('logo.jpg')
+#snakePass = pygame.transform.scale(snakePass, (SCREEN_WIDTH, SCREEN_HEIGHT))
 ######MUSIC#######
 #pygame.mixer.music.load("Game_Music.mp3")
 #pygame.mixer.music.play(-1,0.0)
@@ -76,9 +75,9 @@ def menu():
                     if event.key == pygame.K_ESCAPE:
                         pygame.quit()
                         quit()
-                
+
             window.fill(white)
-            window.blit(snakePass, (0,0))
+            #window.blit(snakePass, (0,0))
             button('GO!',(3*SCREEN_WIDTH)/20,SCREEN_HEIGHT/1.2,100,50,GREEN,hot_green,game_Loop)
             button('Quit!',(3*SCREEN_WIDTH)/4,SCREEN_HEIGHT/1.2,100,50,RED,hot_red,exit)
             pygame.display.update()
@@ -88,7 +87,7 @@ def snake(snake_body, body_size):
         body=pygame.draw.rect(window, GREEN, (X_and_Y[0], X_and_Y[1], body_size, body_size))
 def game_Loop():
     snake_body = []
-    snake_length = 3
+    snake_length = 6
     foodX = round(random.randrange(0, SCREEN_WIDTH - body_size) / body_size) * body_size
     foodY = round(random.randrange(0, SCREEN_HEIGHT - body_size) / body_size) * body_size
     ##Round function is used on above variables so that
@@ -108,16 +107,16 @@ def game_Loop():
                 ##Changing snake coordinates on key presses
                 global X, Y, Xvel, Yvel
                 if move_Left:
-                    Xvel = -1
+                    Xvel = -vel
                     Yvel = 0
                 if move_Right:
-                    Xvel = 1
+                    Xvel = vel
                     Yvel = 0
                 if move_Up:
-                    Yvel = -1
+                    Yvel = -vel
                     Xvel = 0
                 if move_Down:
-                    Yvel = 1
+                    Yvel = vel
                     Xvel = 0
         #window.fill(RED)
         X += Xvel
@@ -139,7 +138,7 @@ def game_Loop():
             del snake_body[0]
         snake(snake_body, body_size)
         display.update()
-        
+
         clock.tick()
         window.fill(RED)
 menu()
