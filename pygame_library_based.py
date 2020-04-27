@@ -154,7 +154,7 @@ def game_Loop():
         display.update()
 
         clock.tick(FPS)
-        window.fill(RED)
+        window.fill(BLACK)
 menu()
 #Executing Program
 game_Loop()
