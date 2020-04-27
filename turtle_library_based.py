@@ -1,18 +1,21 @@
-''' World's Best Ever Snake Game: SnEEcs '''
+''' World's Simplest Ever Snake Game: SnEECS '''
 
 
 import turtle
 import time
 import random
+
 # variables
 delay = 0.1
 score = 0
 HighScore = 0
+width = turtle.window_width()
+height = turtle.window_height()
 # Screen of the snake game 
 wn = turtle.Screen()
 wn.title("Snake Game")
-wn.bgpic("Box 4.gif")
-wn.setup(width=590, height=590)
+#wn.bgpic("logo.jpg")
+wn.setup(width, height) #width, height = 590
 wn.tracer(0)
 # Snake head 
 head = turtle.Turtle()
@@ -22,6 +25,25 @@ head.color('black')
 head.penup()
 head.goto(0,0)
 head.direction = 'stop'
+# borderLIne 
+borderLine = turtle.Turtle()
+borderLine.hideturtle();
+borderLine.penup()
+borderLine.left(90)
+borderLine.forward(250)
+borderLine.right(90)
+borderLine.backward(width/2)
+
+borderLine.pendown()
+borderLine.forward(width)
+borderLine.right(90)
+borderLine.forward(height-35)
+borderLine.right(90)
+borderLine.forward(width)
+borderLine.right(90)
+borderLine.forward(height-35)
+#borderLIne.left(0)
+#borderLIne.forward(280)
 # Food of Snake 
 food = turtle.Turtle()
 food.speed(0)
@@ -37,7 +59,7 @@ pen.shape('square')
 pen.penup()
 pen.goto(0, 250)
 pen.hideturtle()
-pen.write('Score: 0 High Score: 0', align = 'center', font = ('courier', 24, 'bold'))
+pen.write('Score: 0 High Score: 0', align = 'center', font = ('ubuntu', 24, 'bold'))
 
 # Functions to orient direction
 def GoUp():
@@ -80,7 +102,7 @@ segments = []
 while True:
     wn.update()
     # Check for Border collisions
-    if head.xcor()>280 or head.xcor()<-280 or head.ycor()>280 or head.ycor()<-280:
+    if head.xcor()>(width/2)-5 or head.xcor()<(-width/2 )+5 or head.ycor()>238 or head.ycor()<(-height/2)+10:
         time.sleep(0.8)
         head.goto(0,0)
         head.direction = 'stop'
@@ -98,7 +120,7 @@ while True:
     # Check the food to move it randomly on the screen
     if head.distance(food) < 20:
         x = random.randint(-270, 270)
-        y = random.randint(-270, 270)
+        y = random.randint(-270, 230)
         food.goto(x, y)
         # Creates a new turtle object when snake eat its food
         Newsegment = turtle.Turtle()
